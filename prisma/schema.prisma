@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model regions {
+  region_id Int         @id @default(autoincrement())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Services  services[]
+  Addresses addresses[]
+}
+
+model categories {
+  category_id Int        @id @default(autoincrement())
+  name        String     @unique
+  type        String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Services    services[]
+}
+
+model services {
+  service_id  Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  region_id   Int
+  category_id Int
+
+  region   regions    @relation(fields: [region_id], references: [region_id])
+  category categories @relation(fields: [category_id], references: [category_id])
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Contacts  contacts[]
+}
+
+model addresses {
+  address_id  Int     @id @default(autoincrement())
+  street      String
+  city        String
+  state       String
+  postal_code String
+  latitude    Decimal @db.Decimal(10, 8)
+  longitude   Decimal @db.Decimal(11, 8)
+
+  region_id Int
+  region    regions @relation(fields: [region_id], references: [region_id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model contacts {
+  contact_id Int     @id @default(autoincrement())
+  type       String
+  value      String
+  is_primary Boolean @default(false)
+
+  service_id Int
+  service    services @relation(fields: [service_id], references: [service_id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
