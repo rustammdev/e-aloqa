@@ -53,7 +53,9 @@ export class RegionService {
     return this.prisma.regions.update({ where: { region_id: id }, data });
   }
 
-  async deleteRegion(id: number) {
+  async deleteRegionById(id: number) {
+    await this.getRegionById(id);
+
     return await this.prisma.regions.delete({ where: { region_id: id } });
   }
 }
