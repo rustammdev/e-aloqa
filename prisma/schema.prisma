@@ -11,36 +11,48 @@ datasource db {
 }
 
 model regions {
-  region_id Int         @id @default(autoincrement())
-  name      String      @unique
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  Services  services[]
-  Addresses addresses[]
+  region_id Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Bitta region bir nechta servislarga tegishli
+  services  services[]  @relation("ServiceRegions")
+  // Bitta region bir nechta adressga tegishli
+  addresses addresses[]
 }
 
 model categories {
-  category_id Int        @id @default(autoincrement())
-  name        String     @unique
+  category_id Int      @id @default(autoincrement())
+  name        String   @unique
   type        String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  Services    services[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Bitta kategoriya bir nechta servislarga tegishli
+  services services[]
 }
 
 model services {
   service_id  Int    @id @default(autoincrement())
   name        String @unique
   description String
-  region_id   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Many-to-many (Bitta servis bir nechta regionga tegishli)
+  regions regions[] @relation("ServiceRegions")
+
+  // One-to-many (Bitta servis faqat bitta kategoriya bilan bog'lanadi)
+  category    categories @relation(fields: [category_id], references: [category_id])
   category_id Int
 
-  region   regions    @relation(fields: [region_id], references: [region_id])
-  category categories @relation(fields: [category_id], references: [category_id])
+  // One-to-many (Bitta servis bir nechta adresga tegishli)
+  addresses addresses[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Contacts  contacts[]
+  // One-to-many relationship with contacts (Bitta servis faqat bitta contactga tegishli)
+  contacts contacts[]
 }
 
 model addresses {
@@ -52,11 +64,17 @@ model addresses {
   latitude    Decimal @db.Decimal(10, 8)
   longitude   Decimal @db.Decimal(11, 8)
 
-  region_id Int
-  region    regions @relation(fields: [region_id], references: [region_id])
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // One-to-many (Bitta adres faqat bitta servicega tegishli)
+  service_id Int
+  service    services @relation(fields: [service_id], references: [service_id])
+
+  // One-to-many (Bitta adres bitta regionga tegishli)
+  region_id Int
+  region    regions    @relation(fields: [region_id], references: [region_id])
+  contacts  contacts[]
 }
 
 model contacts {
@@ -65,9 +83,14 @@ model contacts {
   value      String
   is_primary Boolean @default(false)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // One-to-many (Bitta contact faqat bitta servicega tegishli)
   service_id Int
   service    services @relation(fields: [service_id], references: [service_id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // One-to-many (Bitta contact faqat bitta addressga tegishli)
+  address_id Int
+  address    addresses @relation(fields: [address_id], references: [address_id])
 }
