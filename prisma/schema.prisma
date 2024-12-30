@@ -25,7 +25,7 @@ model regions {
 model categories {
   category_id Int      @id @default(autoincrement())
   name        String   @unique
-  type        String
+  description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -51,7 +51,7 @@ model services {
   // One-to-many (Bitta servis bir nechta adresga tegishli)
   addresses addresses[]
 
-  // One-to-many relationship with contacts (Bitta servis faqat bitta contactga tegishli)
+  // One-to-many (Bitta servis faqat bitta contactga tegishli)
   contacts contacts[]
 }
 

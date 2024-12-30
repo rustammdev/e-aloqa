@@ -28,7 +28,7 @@ export class RegionController {
     return await this.regionService.getRegions();
   }
 
-  // paramdan kelgan malumotlar string ko'rinishida bo'ladi
+  // paramdan kelgan ma'lumotlar string ko'rinishida bo'ladi
   @Get(':id')
   async getRegionById(@Param('id', ParseIntPipe) id: number) {
     return await this.regionService.getRegionById(id);
