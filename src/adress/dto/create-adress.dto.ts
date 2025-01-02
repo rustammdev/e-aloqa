@@ -1,7 +1,6 @@
 import {
   IsString,
   IsNotEmpty,
-  IsDecimal,
   Length,
   MaxLength,
   IsNumber,
@@ -17,7 +16,6 @@ export class CreateAddressDto {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(10)
   maps_link: string; // Uy raqami
 
   @IsString()

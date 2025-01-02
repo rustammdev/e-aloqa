@@ -2,12 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { Prisma } from '@prisma/client';
-import path from 'path/win32';
 
 @Injectable()
 export class ServiceService {
   constructor(private prisma: PrismaService) {}
 
+  // Cretae service
   async createService(dto: CreateServiceDto) {
     const prismaData: Prisma.servicesCreateInput = {
       name: dto.name,
@@ -44,6 +44,7 @@ export class ServiceService {
     }
   }
 
+  // get services
   async getServices() {
     return await this.prisma.services.findMany();
   }

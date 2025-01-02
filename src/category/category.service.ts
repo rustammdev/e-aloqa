@@ -56,7 +56,14 @@ export class CategoryService {
         throw new HttpException('Category name alredy taken', 400);
     }
 
-    return this.prisma.categories.update({ where: { category_id: id }, data });
+    try {
+      return this.prisma.categories.update({
+        where: { category_id: id },
+        data,
+      });
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async deleteCategoryById(id: number) {

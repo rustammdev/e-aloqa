@@ -7,6 +7,7 @@ import { CreateAddressDto } from './dto/create-adress.dto';
 export class AdressService {
   constructor(private prisma: PrismaService) {}
 
+  // create adress
   async createAdress(body: CreateAddressDto) {
     const data: Prisma.addressesCreateInput = {
       city: body.city,
@@ -30,6 +31,40 @@ export class AdressService {
 
     try {
       return await this.prisma.addresses.create({ data });
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // get all adress
+  async getAllAdresses() {
+    return await this.prisma.addresses.findMany();
+  }
+
+  async delAdressById(id: number) {
+    await this.getAdressById(id);
+    return await this.prisma.addresses.delete({ where: { address_id: id } });
+  }
+
+  // get adresss By id
+  async getAdressById(id: number) {
+    const adress = await this.prisma.addresses.findUnique({
+      where: { address_id: id },
+    });
+
+    if (!adress) throw new HttpException('Adress not found', 404);
+
+    return adress;
+  }
+
+  async updateById(id: number, data: Prisma.addressesUpdateInput) {
+    await this.getAdressById(id);
+
+    try {
+      return this.prisma.addresses.update({
+        where: { address_id: id },
+        data,
+      });
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
