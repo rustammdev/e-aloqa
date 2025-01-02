@@ -46,8 +46,10 @@ export class CategoryService {
     await this.getCategoryById(id);
 
     if (data.name) {
-      const findRegion = await this.prisma.categories.findUnique({
-        where: { name: data.name as string },
+      const findRegion = await this.prisma.categories.findFirst({
+        where: {
+          AND: [{ name: data.name as string }, { category_id: { not: id } }],
+        },
       });
 
       if (findRegion)

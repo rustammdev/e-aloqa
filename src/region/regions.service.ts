@@ -32,7 +32,7 @@ export class RegionService {
       where: { region_id: id },
     });
 
-    if (!user) throw new HttpException('User not found', 404);
+    if (!user) throw new HttpException('Region not found', 404);
 
     return user;
   }
@@ -43,8 +43,10 @@ export class RegionService {
     // "Dublicated key error" xatoligi kelib chiqmasligi uchun,
     // yangilashdan oldin tekshirish kerak
     if (data.name) {
-      const findRegion = await this.prisma.regions.findUnique({
-        where: { name: data.name as string },
+      const findRegion = await this.prisma.regions.findFirst({
+        where: {
+          AND: [{ name: data.name as string }, { region_id: { not: id } }],
+        },
       });
 
       if (findRegion) throw new HttpException('Region alredy taken', 400);
